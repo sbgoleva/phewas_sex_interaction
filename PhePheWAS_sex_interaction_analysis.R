@@ -4,19 +4,19 @@
 
 
 #####to change######
-pheno.name <- "PTSD narrow"
-pheno_file <- "/data/davis_lab/golevasb/Projects/PTSD_GWAS/20190801_MEGA.GRID.RACE.GEN.batch.PCs.covariates.ptsd.all.case.control.txt"
-demo_file <- "/data/davis_lab/shared/phenotype_data/biovu/delivered_data/SD_wide_pull_PheWAS_covariates/20200518_MEGA.GRID.RACE.ETH.GEN.batch.PCs.age.BMI.covariates_EU.filt1.txt"
-working.directory <- "/data/davis_lab/golevasb/Projects/PTSD_GWAS/PheWAS/sex_interaction"
-phewas.covariates.to.use <- c("is.male", "RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
-sex_strat_phewas.covariates.to.use <- c("RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
-demo.subject.col.name <- "GRID"
-demo.pheno.col.name <- "PTSD_narrow"
-sex.col.name <- "is.male"
-male.denotation <- 1
-female.denotation <- 0
-biobank.name <- "VUMC"
-phecodes <- "/data/davis_lab/sealockj/projects/scripts/sex_strat_prs_phewas/mega_geno_set_phecode_table_02062020.Rdata"
+pheno.name = "PTSD narrow"
+pheno_file = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/20190801_MEGA.GRID.RACE.GEN.batch.PCs.covariates.ptsd.all.case.control.txt"
+demo_file = "/data/davis_lab/shared/phenotype_data/biovu/delivered_data/SD_wide_pull_PheWAS_covariates/20200518_MEGA.GRID.RACE.ETH.GEN.batch.PCs.age.BMI.covariates_EU.filt1.txt"
+working.directory = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/PheWAS/sex_interaction"
+phewas.covariates.to.use = c("is.male", "RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
+sex_strat_phewas.covariates.to.use = c("RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
+demo.subject.col.name = "GRID"
+demo.pheno.col.name = "PTSD_narrow"
+sex.col.name = "is.male"
+male.denotation = 1
+female.denotation = 0
+biobank.name = "VUMC"
+phecodes = "/data/davis_lab/sealockj/projects/scripts/sex_strat_prs_phewas/mega_geno_set_phecode_table_02062020.Rdata"
 load(phecodes) #reads in phenotype table as variable "phecode." Manually create if need be
 #phecode=read.table(phenotype/table)
 ###############
@@ -43,14 +43,14 @@ demographics=demographics[append(demo.subject.col.name,(unlist(strsplit(phewas.c
 
 all_pheno=read.table(pheno_file, stringsAsFactors = FALSE, header = TRUE, quote="", comment.char="")
 all_pheno=all_pheno[c(demo.subject.col.name,demo.pheno.col.name)]
-colnames(all_pheno) <- c(demo.subject.col.name, "Phenotype")
+colnames(all_pheno) = c(demo.subject.col.name, "Phenotype")
 
 #create sex stratified pheno files 
-gender_key <- demographics[c(demo.subject.col.name,sex.col.name)]
+gender_key = demographics[c(demo.subject.col.name,sex.col.name)]
 
-all_pheno_gender <- merge(gender_key, all_pheno, by=demo.subject.col.name, all.x = FALSE)
-pheno_males <- all_pheno_gender[all_pheno_gender[[sex.col.name]]==male.denotation,]
-pheno_females <- all_pheno_gender[all_pheno_gender[[sex.col.name]]==female.denotation,]
+all_pheno_gender = merge(gender_key, all_pheno, by=demo.subject.col.name, all.x = FALSE)
+pheno_males = all_pheno_gender[all_pheno_gender[[sex.col.name]]==male.denotation,]
+pheno_females = all_pheno_gender[all_pheno_gender[[sex.col.name]]==female.denotation,]
 
 
 ##Running phewases in all, male and female##
@@ -62,50 +62,50 @@ pheno_females <- all_pheno_gender[all_pheno_gender[[sex.col.name]]==female.denot
 
 ###### Run phewas on all ########
 
-chart.title <- paste0('PheWAS of ',biobank.name,'-EHR ',pheno.name)
+chart.title = paste0('PheWAS of ',biobank.name,'-EHR ',pheno.name)
 
-all_pheno$Phenotype <- scale(all_pheno$Phenotype)
+all_pheno$Phenotype = scale(all_pheno$Phenotype)
 
 results=phewas(phenotypes=phecode,genotypes=all_pheno, covariates=demographics[,append(demo.subject.col.name,(unlist(strsplit(phewas.covariates.to.use, ","))))], additive.genotypes=F, min.records=30, significance.threshold=c('bonferroni', 'fdr'), cores=4)
 
-results[,1]<-gsub("X", "", results[,1])
+results[,1]=gsub("X", "", results[,1])
 
-results_d <- addPhecodeInfo(results)
+results_d = addPhecodeInfo(results)
 
-results_d$lci <- exp(results_d$beta - (1.96*results_d$SE))
-results_d$uci <- exp(results_d$beta + (1.96*results_d$SE))
+results_d$lci = exp(results_d$beta - (1.96*results_d$SE))
+results_d$uci = exp(results_d$beta + (1.96*results_d$SE))
 
 write.table(results_d[order(results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_all', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 #label top 20 hits
 x = 25
-xth_most_extreme <- sort(results_d$p)[x]
+xth_most_extreme = sort(results_d$p)[x]
 pdf(file=file.path(working.directory, paste0(pheno.name, '_all', '.pdf')))
-p<-phewasManhattan(results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
+p=phewasManhattan(results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 print(p)
 dev.off()
 
 #### males ####
-chart.title <- paste0('PheWAS of ',biobank.name,'-EHR males with ',pheno.name)
+chart.title = paste0('PheWAS of ',biobank.name,'-EHR males with ',pheno.name)
 
-pheno_males$Phenotype <- scale(pheno_males$Phenotype)
+pheno_males$Phenotype = scale(pheno_males$Phenotype)
 
 m_results=phewas(phenotypes=phecode[phecode[[demo.subject.col.name]] %in% pheno_males[[demo.subject.col.name]],], genotypes=pheno_males, covariates=demographics[phecode[[demo.subject.col.name]] %in% pheno_males[[demo.subject.col.name]],append(demo.subject.col.name,(unlist(strsplit(sex_strat_phewas.covariates.to.use, ","))))], additive.genotypes=F, min.records=25, significance.threshold=c('bonferroni', 'fdr'), cores=4)
 
-m_results[,1]<-gsub("X", "", m_results[,1])
+m_results[,1]=gsub("X", "", m_results[,1])
 
-m_results_d <- addPhecodeInfo(m_results)
+m_results_d = addPhecodeInfo(m_results)
 
-m_results_d$lci <- exp(m_results_d$beta - (1.96*m_results_d$SE))
-m_results_d$uci <- exp(m_results_d$beta + (1.96*m_results_d$SE))
+m_results_d$lci = exp(m_results_d$beta - (1.96*m_results_d$SE))
+m_results_d$uci = exp(m_results_d$beta + (1.96*m_results_d$SE))
 
 
 write.table(m_results_d[order(m_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_males', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 x = 20
-xth_most_extreme <- sort(m_results_d$p)[x]
+xth_most_extreme = sort(m_results_d$p)[x]
 pdf(file=file.path(working.directory, paste0(pheno.name, '_males', '.pdf')))
-p<-phewasManhattan(m_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
+p=phewasManhattan(m_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 #saveRDS(p, "all_plot.rds")
 print(p)
 dev.off()
@@ -113,27 +113,27 @@ dev.off()
 
 #### females ####
 
-chart.title <- paste0('PheWAS of ',biobank.name,'-EHR females with ',pheno.name)
+chart.title = paste0('PheWAS of ',biobank.name,'-EHR females with ',pheno.name)
 
-pheno_females$Phenotype <- scale(pheno_females$Phenotype)
+pheno_females$Phenotype = scale(pheno_females$Phenotype)
 
 f_results=phewas(phenotypes=phecode[phecode[[demo.subject.col.name]] %in% pheno_females[[demo.subject.col.name]],],genotypes=pheno_females, covariates=demographics[phecode[[demo.subject.col.name]] %in% pheno_females[[demo.subject.col.name]],append(demo.subject.col.name,(unlist(strsplit(sex_strat_phewas.covariates.to.use, ","))))], additive.genotypes=F, min.records=25, significance.threshold=c('bonferroni', 'fdr'), cores=4)
 
-f_results[,1]<-gsub("X", "", f_results[,1])
+f_results[,1]=gsub("X", "", f_results[,1])
 
-f_results_d <- addPhecodeInfo(f_results)
+f_results_d = addPhecodeInfo(f_results)
 
-f_results_d$lci <- exp(f_results_d$beta - (1.96*f_results_d$SE))
-f_results_d$uci <- exp(f_results_d$beta + (1.96*f_results_d$SE))
+f_results_d$lci = exp(f_results_d$beta - (1.96*f_results_d$SE))
+f_results_d$uci = exp(f_results_d$beta + (1.96*f_results_d$SE))
 
 
 write.table(f_results_d[order(f_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_females', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 
 x = 20
-xth_most_extreme <- sort(f_results_d$p)[x]
+xth_most_extreme = sort(f_results_d$p)[x]
 pdf(file=file.path(working.directory, paste0(pheno.name, '_females', '.pdf')))
-p<-phewasManhattan(f_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
+p=phewasManhattan(f_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 print(p)
 dev.off()
 
@@ -169,21 +169,21 @@ demo_pheno = merge(all_pheno, demog, by = demo.subject.col.name)
 demo_pheno = merge(demo_pheno, phenotypes_sig, by=demo.subject.col.name, all.x=FALSE, all.y=FALSE)
 
 #function to apply logistic regression
-interaction_term_regression <- function(var) {
+interaction_term_regression = function(var) {
   tryCatch({
     formula_to_use = formula(paste0(paste0("var ~ Phenotype + ",sex.col.name, " + "),paste(unlist(sex_strat_phewas.covariates.to.use), collapse=" + "),paste0(" + Phenotype * ",sex.col.name)))
     regression = glm(formula_to_use, data=demo_pheno, family="binomial")
-    coef <- coef(summary(regression))
+    coef = coef(summary(regression))
     return(coef[nrow(coef),ncol(coef)])
   }, error=function(e){cat("ERROR", conditionMessage(e),"\n")})}
 
 #get results of interaction linear regression, but only take phenotype columns (after the first few identifying columns)
-interaction_term_pval <- lapply(demo_pheno[(length(phewas.covariates.to.use)+3):ncol(demo_pheno)],interaction_term_regression)
+interaction_term_pval = lapply(demo_pheno[(length(phewas.covariates.to.use)+3):ncol(demo_pheno)],interaction_term_regression)
 ##since results are in form of a list, convert to a data frame
-reg_results <- ldply (interaction_term_pval, data.frame)
+reg_results = ldply (interaction_term_pval, data.frame)
 colnames(reg_results) = c("PheCode",  "Interaction_P")
 #take "X" out of results PheCodes, resulting in only numerical phecodes
-reg_results[,1]<-gsub("X", "", reg_results[,1])
+reg_results[,1]=gsub("X", "", reg_results[,1])
 #map phecodes to phenotypes and groups
 phecode_mapped = addPhecodeInfo(reg_results)
 phecode_mapped$Significant = phecode_mapped$Interaction_P < (0.05/(ncol(demo_pheno)-(length(phewas.covariates.to.use)+3)))
@@ -209,7 +209,7 @@ phecode_mapped_plotting=rbind(female_phewas_plotting,male_phewas_plotting)
 phecode_mapped = merge(phecode_mapped, female_phewas, by='PheCode', all.x=TRUE, all.y=FALSE)
 phecode_mapped = merge(phecode_mapped, male_phewas, by='PheCode', all.x=TRUE, all.y=FALSE)
 
-phecode_mapped_order <- phecode_mapped[order(phecode_mapped$Interaction_P),]
+phecode_mapped_order = phecode_mapped[order(phecode_mapped$Interaction_P),]
 write.table(phecode_mapped_order, paste0(pheno.name,"_phewas_",biobank.name,"_sd_wide_sex_interaction_results.txt"), col.names=T, row.names=F, sep="\t", quote=F)
 
 
@@ -240,7 +240,7 @@ if(nrow(phecode_mapped[phecode_mapped$Significant==TRUE & (phecode_mapped$OR_fem
 }else{
   categories$Number_male_interaction = 0
 }
-categories[is.na(categories)] <- 0
+categories[is.na(categories)] = 0
 write.table(categories, paste0(pheno.name,"_categories_sex_interactions",biobank.name,".txt"), col.names=T, row.names=F, sep="\t", quote=F)
 
 
