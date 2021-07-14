@@ -75,12 +75,12 @@ results_d = addPhecodeInfo(results)
 results_d$lci = exp(results_d$beta - (1.96*results_d$SE))
 results_d$uci = exp(results_d$beta + (1.96*results_d$SE))
 
-write.table(results_d[order(results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_all', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
+write.table(results_d[order(results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_all_', biobank.name,'.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 #label top 20 hits
 x = 25
 xth_most_extreme = sort(results_d$p)[x]
-pdf(file=file.path(working.directory, paste0(pheno.name, '_all', '.pdf')))
+pdf(file=file.path(working.directory, paste0(pheno.name, '_all_',biobank.name, '.pdf')))
 p=phewasManhattan(results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 print(p)
 dev.off()
@@ -100,11 +100,11 @@ m_results_d$lci = exp(m_results_d$beta - (1.96*m_results_d$SE))
 m_results_d$uci = exp(m_results_d$beta + (1.96*m_results_d$SE))
 
 
-write.table(m_results_d[order(m_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_males', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
+write.table(m_results_d[order(m_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_males_', biobank.name, '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 x = 20
 xth_most_extreme = sort(m_results_d$p)[x]
-pdf(file=file.path(working.directory, paste0(pheno.name, '_males', '.pdf')))
+pdf(file=file.path(working.directory, paste0(pheno.name, '_males_',biobank.name, '.pdf')))
 p=phewasManhattan(m_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 #saveRDS(p, "all_plot.rds")
 print(p)
@@ -127,12 +127,12 @@ f_results_d$lci = exp(f_results_d$beta - (1.96*f_results_d$SE))
 f_results_d$uci = exp(f_results_d$beta + (1.96*f_results_d$SE))
 
 
-write.table(f_results_d[order(f_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_females', '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
+write.table(f_results_d[order(f_results_d$p), ], file=file.path(working.directory, paste0(pheno.name, '_females_',biobank.name, '.txt')), col.names=T, row.names=F, quote=F, sep='\t')
 
 
 x = 20
 xth_most_extreme = sort(f_results_d$p)[x]
-pdf(file=file.path(working.directory, paste0(pheno.name, '_females', '.pdf')))
+pdf(file=file.path(working.directory, paste0(pheno.name, '_females_',biobank.name, '.pdf')))
 p=phewasManhattan(f_results, OR.direction=T, annotate.level=xth_most_extreme, title=paste0(chart.title), base.labels = FALSE, annotate.size = 4)
 print(p)
 dev.off()
@@ -210,7 +210,7 @@ phecode_mapped = merge(phecode_mapped, female_phewas, by='PheCode', all.x=TRUE, 
 phecode_mapped = merge(phecode_mapped, male_phewas, by='PheCode', all.x=TRUE, all.y=FALSE)
 
 phecode_mapped_order = phecode_mapped[order(phecode_mapped$Interaction_P),]
-write.table(phecode_mapped_order, paste0(pheno.name,"_phewas_",biobank.name,"_sd_wide_sex_interaction_results.txt"), col.names=T, row.names=F, sep="\t", quote=F)
+write.table(phecode_mapped_order, paste0(pheno.name,"_phewas_",biobank.name,"_sex_interaction_results.txt"), col.names=T, row.names=F, sep="\t", quote=F)
 
 
 ##df with all that had no significant sex interaction
@@ -241,7 +241,7 @@ if(nrow(phecode_mapped[phecode_mapped$Significant==TRUE & (phecode_mapped$OR_fem
   categories$Number_male_interaction = 0
 }
 categories[is.na(categories)] = 0
-write.table(categories, paste0(pheno.name,"_categories_sex_interactions",biobank.name,".txt"), col.names=T, row.names=F, sep="\t", quote=F)
+write.table(categories, paste0(pheno.name,"_categories_sex_interactions_",biobank.name,".txt"), col.names=T, row.names=F, sep="\t", quote=F)
 
 
 pdf(paste0(pheno.name,"_",biobank.name,"_forest_plot_sex_diff_interactionp_glm.pdf"))
@@ -261,4 +261,3 @@ p = ggplot(data=phecode_mapped_plotting,
   coord_flip()
 p
 dev.off()
-# 
