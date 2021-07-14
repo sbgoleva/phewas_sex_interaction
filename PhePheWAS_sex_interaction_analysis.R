@@ -3,23 +3,23 @@
 .libPaths("~/R/rlib-3.6.0")
 
 
-#####to change######
-pheno.name = "PTSD narrow"
-pheno_file = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/20190801_MEGA.GRID.RACE.GEN.batch.PCs.covariates.ptsd.all.case.control.txt"
-demo_file = "/data/davis_lab/shared/phenotype_data/biovu/delivered_data/SD_wide_pull_PheWAS_covariates/20200518_MEGA.GRID.RACE.ETH.GEN.batch.PCs.age.BMI.covariates_EU.filt1.txt"
-working.directory = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/PheWAS/sex_interaction"
-phewas.covariates.to.use = c("is.male", "RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
-sex_strat_phewas.covariates.to.use = c("RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
-demo.subject.col.name = "GRID"
-demo.pheno.col.name = "PTSD_narrow"
-sex.col.name = "is.male"
-male.denotation = 1
-female.denotation = 0
-biobank.name = "VUMC"
-phecodes = "/data/davis_lab/sealockj/projects/scripts/sex_strat_prs_phewas/mega_geno_set_phecode_table_02062020.Rdata"
-load(phecodes) #reads in phenotype table as variable "phecode." Manually create if need be
-#phecode=read.table(phenotype/table)
-###############
+# #####to change######
+# pheno.name = "PTSD narrow"
+# pheno_file = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/20190801_MEGA.GRID.RACE.GEN.batch.PCs.covariates.ptsd.all.case.control.txt"
+# demo_file = "/data/davis_lab/shared/phenotype_data/biovu/delivered_data/SD_wide_pull_PheWAS_covariates/20200518_MEGA.GRID.RACE.ETH.GEN.batch.PCs.age.BMI.covariates_EU.filt1.txt"
+# working.directory = "/data/davis_lab/golevasb/Projects/PTSD_GWAS/PheWAS/sex_interaction"
+# phewas.covariates.to.use = c("is.male", "RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
+# sex_strat_phewas.covariates.to.use = c("RACE", "ETHNICITY", "PC1", "PC2", "PC3", "PC4","median_age_of_record")
+# demo.subject.col.name = "GRID"
+# demo.pheno.col.name = "PTSD_narrow"
+# sex.col.name = "is.male"
+# male.denotation = 1
+# female.denotation = 0
+# biobank.name = "VUMC"
+# phecodes = "/data/davis_lab/sealockj/projects/scripts/sex_strat_prs_phewas/mega_geno_set_phecode_table_02062020.Rdata"
+# load(phecodes) #reads in phenotype table as variable "phecode." Manually create if need be
+# #phecode=read.table(phenotype/table)
+# ###############
 
 ###libraries to load###
 library(PheWAS)
